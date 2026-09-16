@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WaykuRunner.Api/WaykuRunner.Api.csproj" />
+  </Folder>
+</Solution>

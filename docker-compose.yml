@@ -1,0 +1,68 @@
+name: wayku-runner
+
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    container_name: wayku-runner-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - wayku_runner_postgres_data:/var/lib/postgresql/data
+      - ./database/migrations/001_admin_map_subscription.sql:/docker-entrypoint-initdb.d/001_admin_map_subscription.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  api:
+    build:
+      context: ./src/WaykuRunner.Api
+      dockerfile: Dockerfile
+    container_name: wayku-runner-api
+    restart: unless-stopped
+    environment:
+      ConnectionStrings__WaykuRunner: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      Admin__BootstrapKey: ${WAYKU_ADMIN_BOOTSTRAP_KEY}
+      ASPNETCORE_ENVIRONMENT: "Development"
+    ports:
+      - "5180:5180"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./src/WaykuRunner.Backoffice
+      dockerfile: Dockerfile
+    container_name: wayku-runner-web
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: wayku-runner-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "${PGADMIN_PORT}:80"
+    volumes:
+      - wayku_runner_pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  wayku_runner_postgres_data:
+  wayku_runner_pgadmin_data:
