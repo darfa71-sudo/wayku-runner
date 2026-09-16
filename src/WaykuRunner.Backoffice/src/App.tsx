@@ -20,6 +20,8 @@ import {
   createZone,
   deactivateProduct,
   fetchDashboardData,
+  fetchZoneMap,
+  fetchZones,
   fetchHubAgenda,
   fetchHubServices,
   fetchOrders,
@@ -81,6 +83,7 @@ export default function App() {
   // Estados de acción interactiva
   const [draftPoints, setDraftPoints] = useState<Point[]>([])
   const [savingZone, setSavingZone] = useState(false)
+  const [refreshingMap, setRefreshingMap] = useState(false)
   const [publishingZoneId, setPublishingZoneId] = useState<string | null>(null)
   const [claimingQr, setClaimingQr] = useState(false)
   const [creatingProduct, setCreatingProduct] = useState(false)
@@ -128,11 +131,35 @@ export default function App() {
     }
   }, [])
 
+  const refreshTerritoryMap = useCallback(async (key: string) => {
+    setRefreshingMap(true)
+    setError('')
+    try {
+      const [latestZones, latestMap] = await Promise.all([fetchZones(key), fetchZoneMap(key)])
+      setZones(latestZones)
+      setZoneFeatures(latestMap as GeoFeatureCollection)
+    } catch (refreshError) {
+      setError(
+        refreshError instanceof Error
+          ? refreshError.message
+          : 'No se pudo actualizar el mapa de territorios.',
+      )
+    } finally {
+      setRefreshingMap(false)
+    }
+  }, [])
+
   useEffect(() => {
     if (adminKey) {
       void loadData(adminKey)
     }
   }, [adminKey, loadData])
+
+  useEffect(() => {
+    if (section === 'mapa' && adminKey) {
+      void refreshTerritoryMap(adminKey)
+    }
+  }, [adminKey, refreshTerritoryMap, section])
 
   const handleConnect = () => {
     const nextKey = keyInput.trim()
@@ -389,6 +416,8 @@ export default function App() {
         zoneFeatures={zoneFeatures}
         onPublishZone={handlePublishZone}
         publishingZoneId={publishingZoneId}
+        onRefresh={() => refreshTerritoryMap(adminKey)}
+        refreshing={refreshingMap}
       />
     )
   } else if (section === 'eventos') {

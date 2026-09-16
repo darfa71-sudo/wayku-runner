@@ -1,4 +1,4 @@
-import { Globe, MapPinned, Send } from 'lucide-react'
+import { Globe, MapPinned, RefreshCw, Send } from 'lucide-react'
 import type { FeatureCollection, Zone } from '../../types'
 import { MapWorkspace } from '../map/MapWorkspace'
 
@@ -7,11 +7,15 @@ export function ZoneInventory({
   zoneFeatures,
   onPublishZone,
   publishingZoneId,
+  onRefresh,
+  refreshing,
 }: {
   zones: Zone[]
   zoneFeatures: FeatureCollection
   onPublishZone: (zoneId: string) => Promise<void>
   publishingZoneId: string | null
+  onRefresh: () => Promise<void>
+  refreshing: boolean
 }) {
   const publishedCount = zones.filter((z) => z.status === 'published').length
   const draftCount = zones.filter((z) => z.status === 'draft').length
@@ -40,7 +44,18 @@ export function ZoneInventory({
           <span className="text-xs font-bold uppercase tracking-[0.18em] text-[#bcff40]">
             Inventario territorial
           </span>
-          <h2 className="mt-2 text-xl font-semibold text-white">Todas las zonas</h2>
+          <div className="mt-2 flex items-center justify-between gap-3">
+            <h2 className="text-xl font-semibold text-white">Todas las zonas</h2>
+            <button
+              onClick={() => void onRefresh()}
+              disabled={refreshing}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-[#b7ff3c]/50 hover:text-[#b7ff3c] disabled:opacity-50"
+              title="Actualizar territorios"
+            >
+              <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
+              {refreshing ? 'Actualizando…' : 'Actualizar'}
+            </button>
+          </div>
 
           <div className="mt-5 grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-[#07111d] p-4">

@@ -39,13 +39,21 @@ export interface DashboardData {
   map: FeatureCollection
 }
 
+export function fetchZones(key: string): Promise<Zone[]> {
+  return apiFetch<Zone[]>('/api/admin/zones', key)
+}
+
+export function fetchZoneMap(key: string): Promise<FeatureCollection> {
+  return apiFetch<FeatureCollection>('/api/admin/zones/map', key)
+}
+
 export async function fetchDashboardData(key: string): Promise<DashboardData> {
   const [zones, events, users, memberships, map] = await Promise.all([
-    apiFetch<Zone[]>('/api/admin/zones', key),
+    fetchZones(key),
     apiFetch<RunnerEvent[]>('/api/admin/events', key),
     apiFetch<User[]>('/api/admin/users', key),
     apiFetch<Membership[]>('/api/admin/memberships', key),
-    apiFetch<FeatureCollection>('/api/admin/zones/map', key),
+    fetchZoneMap(key),
   ])
 
   return { zones, events, users, memberships, map }
