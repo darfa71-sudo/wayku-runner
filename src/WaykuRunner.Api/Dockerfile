@@ -26,6 +26,5 @@ COPY --from=build /app/publish ./
 # Render asigna el puerto mediante la variable $PORT.
 # ASP.NET Core debe escuchar en 0.0.0.0:$PORT.
 ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT}
-ENV ASPNETCORE_ENVIRONMENT=Production   # (opcional)
-
+ENV ASPNETCORE_ENVIRONMENT=Production   
 ENTRYPOINT ["dotnet", "WaykuRunner.Api.dll"]
