@@ -4,11 +4,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copiamos el proyecto y restauramos paquetes
-COPY WaykuRunner.Api/*.csproj ./WaykuRunner.Api/
+# Copiamos el proyecto (.csproj) y restauramos paquetes
+# (el primer argumento es relativo al context root)
+COPY src/WaykuRunner.Api/*.csproj ./WaykuRunner.Api/
 RUN dotnet restore ./WaykuRunner.Api/WaykuRunner.Api.csproj
 
-# Copiamos el resto del código y publicamos
+# Copiamos todo el código fuente
 COPY . .
 WORKDIR /src/WaykuRunner.Api
 RUN dotnet publish WaykuRunner.Api.csproj \
@@ -26,5 +27,5 @@ COPY --from=build /app/publish ./
 # Render asigna el puerto mediante la variable $PORT.
 # ASP.NET Core debe escuchar en 0.0.0.0:$PORT.
 ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT}
-ENV ASPNETCORE_ENVIRONMENT=Production   
+ENV ASPNETCORE_ENVIRONMENT=Production  
 ENTRYPOINT ["dotnet", "WaykuRunner.Api.dll"]
