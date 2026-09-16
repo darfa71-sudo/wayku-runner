@@ -1,7 +1,8 @@
 import { Button } from '@heroui/react'
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
-import type { HubService, SpecialistItem, User } from '../../types'
+import type { HubService, User } from '../../types'
+import type { SpecialistItem } from '../../services/api'
 
 export function NewAppointmentModal({
   isOpen,

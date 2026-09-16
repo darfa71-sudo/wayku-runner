@@ -1,4 +1,4 @@
-import { BadgePercent, Edit3, Plus, ShoppingBag, Tag, Trash2 } from 'lucide-react'
+import { BadgePercent, Edit3, Plus, Tag, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import type { StoreCatalogItem } from '../../types'
 import { NewProductModal } from './NewProductModal'

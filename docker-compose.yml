@@ -13,7 +13,7 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - wayku_runner_postgres_data:/var/lib/postgresql/data
-      - ./database/migrations/001_admin_map_subscription.sql:/docker-entrypoint-initdb.d/001_admin_map_subscription.sql:ro
+      - ./database/migrations:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -22,8 +22,8 @@ services:
 
   api:
     build:
-      context: ./src/WaykuRunner.Api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./src/WaykuRunner.Api/Dockerfile
     container_name: wayku-runner-api
     restart: unless-stopped
     environment:

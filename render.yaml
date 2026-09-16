@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: wayku-runner-api
+    runtime: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./src/WaykuRunner.Api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__WaykuRunner
+	value:postgresql://postgres.fcwvxoyncbvkwbyfqcay:WaykuRunnerLocal_2026!@aws-0-us-west-2.pooler.supabase.com:5432/postgres
+        sync: false
+      - key: Admin__BootstrapKey
+	value:2abc2121121323212112435656571234
+        sync: false
+      - key: Cors__AllowedOrigins__0
+        sync: false

@@ -13,6 +13,7 @@ public sealed class WaykuRunnerDbContext(DbContextOptions<WaykuRunnerDbContext> 
     public DbSet<Season> Seasons => Set<Season>();
     public DbSet<RunnerEvent> Events => Set<RunnerEvent>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
+    public DbSet<EventRegistration> EventRegistrations => Set<EventRegistration>();
     public DbSet<AdminUserDirectoryItem> AdminUserDirectory => Set<AdminUserDirectoryItem>();
     public DbSet<AdminAuditLog> AdminAuditLogs => Set<AdminAuditLog>();
 
@@ -126,6 +127,19 @@ public sealed class WaykuRunnerDbContext(DbContextOptions<WaykuRunnerDbContext> 
             entity.Property(subscription => subscription.EndsAt).HasColumnName("ends_at");
             entity.Property(subscription => subscription.GraceEndsAt).HasColumnName("grace_ends_at");
             entity.Property(subscription => subscription.CancelledAt).HasColumnName("cancelled_at");
+        });
+
+        modelBuilder.Entity<EventRegistration>(entity =>
+        {
+            entity.ToTable("event_registrations");
+            entity.HasKey(registration => registration.Id);
+            entity.Property(registration => registration.EventId).HasColumnName("event_id");
+            entity.Property(registration => registration.UserId).HasColumnName("user_id");
+            entity.Property(registration => registration.OrderId).HasColumnName("order_id");
+            entity.Property(registration => registration.BibNumber).HasColumnName("bib_number");
+            entity.Property(registration => registration.CheckInAt).HasColumnName("check_in_at");
+            entity.Property(registration => registration.CreatedAt).HasColumnName("created_at");
+            entity.Property(registration => registration.UpdatedAt).HasColumnName("updated_at");
         });
 
         modelBuilder.Entity<AdminUserDirectoryItem>(entity =>

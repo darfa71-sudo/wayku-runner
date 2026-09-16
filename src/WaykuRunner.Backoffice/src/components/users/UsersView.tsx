@@ -1,4 +1,4 @@
-import { Ban, CheckCircle, Crown, ShieldAlert, ShieldCheck, User } from 'lucide-react'
+import { Ban, CheckCircle, Crown, User } from 'lucide-react'
 import { useState } from 'react'
 import type { User as UserModel } from '../../types'
 

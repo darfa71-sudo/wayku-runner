@@ -1,6 +1,7 @@
-import { Activity, Calendar, Check, Clock, HeartPulse, Plus, User, X } from 'lucide-react'
+import { Activity, Calendar, Check, Clock, Plus, User, X } from 'lucide-react'
 import { useState } from 'react'
-import type { HubAgendaItem, HubService, SpecialistItem, User as UserModel } from '../../types'
+import type { HubAgendaItem, HubService, User as UserModel } from '../../types'
+import type { SpecialistItem } from '../../services/api'
 import { NewAppointmentModal } from './NewAppointmentModal'
 
 export function HubAgendaView({

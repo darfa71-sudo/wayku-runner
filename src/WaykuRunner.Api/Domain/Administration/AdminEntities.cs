@@ -107,6 +107,20 @@ public sealed class Subscription
     public DateTimeOffset? CancelledAt { get; set; }
 }
 
+public sealed class EventRegistration
+{
+    public Guid Id { get; set; }
+    public Guid EventId { get; set; }
+    public Guid UserId { get; set; }
+    public Guid? OrderId { get; set; }
+    public string Status { get; set; } = "pending_payment";
+    public string? BibNumber { get; set; }
+    public string? Category { get; set; }
+    public DateTimeOffset? CheckInAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
+}
+
 public sealed class AdminUserDirectoryItem
 {
     public Guid Id { get; set; }
@@ -289,9 +303,8 @@ public sealed class Payment
     public string Provider { get; set; } = "local";
     public string? ProviderTransactionId { get; set; }
     public decimal Amount { get; set; }
-    public string Status { get; set; } = "approved";
+    public string Status { get; set; } = "pending";
     public DateTimeOffset? PaidAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public Order? Order { get; set; }
 }
-

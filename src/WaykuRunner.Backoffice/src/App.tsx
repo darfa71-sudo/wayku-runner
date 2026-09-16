@@ -277,7 +277,7 @@ export default function App() {
         eventId: data.eventId,
         items: data.items,
         pickupMethod: 'hub_pickup',
-        paymentMethod: 'card',
+        paymentMethod: 'credit_card',
       })
       await loadData(adminKey)
       setSection('ordenes')

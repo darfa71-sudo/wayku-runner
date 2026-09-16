@@ -10,8 +10,10 @@ import type {
   Zone,
 } from '../types'
 
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
+
 export async function apiFetch<T>(path: string, key: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
+  const response = await fetch(`${apiBaseUrl}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -255,4 +257,3 @@ export async function grantUserMembership(key: string, id: string) {
     method: 'POST',
   })
 }
-

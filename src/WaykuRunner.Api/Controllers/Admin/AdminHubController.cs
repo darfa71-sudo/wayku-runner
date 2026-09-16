@@ -57,6 +57,24 @@ public sealed class AdminHubController(WaykuRunnerDbContext db) : ControllerBase
             return NotFound(new { message = "Especialista no encontrado." });
         }
 
+        if (!await db.Users.AnyAsync(user => user.Id == request.UserId, cancellationToken))
+        {
+            return NotFound(new { message = "Atleta no encontrado." });
+        }
+
+        var endsAt = request.ScheduledAt.AddMinutes(service.DurationMinutes);
+        var appointmentConflict = await db.HubAppointments.AnyAsync(appointment =>
+            appointment.SpecialistId == request.SpecialistId &&
+            (appointment.Status == "scheduled" || appointment.Status == "confirmed") &&
+            appointment.ScheduledAt < endsAt &&
+            appointment.ScheduledAt.AddMinutes(appointment.DurationMinutes) > request.ScheduledAt,
+            cancellationToken);
+
+        if (appointmentConflict)
+        {
+            return Conflict(new { message = "El especialista ya tiene una cita en ese horario." });
+        }
+
         var appointment = new HubAppointment
         {
             Id = Guid.NewGuid(),
@@ -110,6 +128,12 @@ public sealed class AdminHubController(WaykuRunnerDbContext db) : ControllerBase
     [HttpPut("appointments/{id:guid}/status")]
     public async Task<ActionResult> UpdateAppointmentStatus(Guid id, [FromBody] UpdateAppointmentStatusRequest request, CancellationToken cancellationToken)
     {
+        var allowedStatuses = new[] { "scheduled", "confirmed", "attended", "cancelled", "no_show" };
+        if (!allowedStatuses.Contains(request.Status))
+        {
+            return BadRequest(new { message = "Estado de cita no válido." });
+        }
+
         var appointment = await db.HubAppointments.SingleOrDefaultAsync(a => a.Id == id, cancellationToken);
         if (appointment is null)
         {

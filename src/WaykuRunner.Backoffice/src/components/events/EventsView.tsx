@@ -1,4 +1,4 @@
-import { CalendarDays, PackagePlus, Plus, Trash2, Users } from 'lucide-react'
+import { CalendarDays, PackagePlus, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import type { RunnerEvent, StoreCatalogItem, User } from '../../types'
 import { EventRegistrationModal } from './EventRegistrationModal'
