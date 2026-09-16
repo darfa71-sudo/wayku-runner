@@ -5,8 +5,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copiamos el proyecto (.csproj) y restauramos paquetes
-COPY ["src/WaykuRunner.Api/WaykuRunner.Api.csproj", "src/WaykuRunner.Api/"]
-RUN dotnet restore "src/WaykuRunner.Api/WaykuRunner.Api.csproj"
+COPY . .
+WORKDIR /src/WaykuRunner.Api
+RUN dotnet restore "WaykuRunner.Api.csproj"
 
 # Copiamos todo el código fuente
 COPY . .
