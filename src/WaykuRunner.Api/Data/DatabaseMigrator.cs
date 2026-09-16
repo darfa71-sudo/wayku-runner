@@ -9,6 +9,7 @@ public static class DatabaseMigrator
         new("001_admin_map_subscription.sql", "SELECT to_regclass('app.territory_zones') IS NOT NULL;"),
         new("002_hub_store_payments.sql", "SELECT to_regclass('app.hub_services') IS NOT NULL;"),
         new("003_checkout_hardening.sql", "SELECT to_regclass('app.event_registrations') IS NOT NULL;"),
+        new("004_territory_status_text.sql", null),
     ];
 
     public static async Task ApplyAsync(IServiceProvider services, ILogger logger, CancellationToken cancellationToken = default)
@@ -40,7 +41,8 @@ public static class DatabaseMigrator
             {
                 if (await IsAppliedAsync(connection, migration.FileName, cancellationToken)) continue;
 
-                if (await SchemaAlreadyExistsAsync(connection, migration.ExistingSchemaProbe, cancellationToken))
+                if (migration.ExistingSchemaProbe is not null &&
+                    await SchemaAlreadyExistsAsync(connection, migration.ExistingSchemaProbe, cancellationToken))
                 {
                     await MarkAppliedAsync(connection, migration.FileName, cancellationToken);
                     logger.LogInformation("Migración {Migration} registrada como base existente.", migration.FileName);
@@ -100,5 +102,5 @@ public static class DatabaseMigrator
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    private sealed record MigrationDefinition(string FileName, string ExistingSchemaProbe);
+    private sealed record MigrationDefinition(string FileName, string? ExistingSchemaProbe);
 }

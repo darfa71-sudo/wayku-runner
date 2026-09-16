@@ -470,12 +470,12 @@ export default function App() {
         />
 
         <div className="mx-auto max-w-[1600px] px-5 py-7 sm:px-8">
-          {!adminKey && (
+          {!connected && (
             <section className="mb-6 flex flex-col gap-4 rounded-2xl border border-[#bcff40]/20 bg-[#bcff40]/7 p-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="font-semibold text-white">Conecta el panel a tu API local</p>
+                <p className="font-semibold text-white">Conecta el panel a la API de Wayku</p>
                 <p className="mt-1 text-sm text-slate-400">
-                  La clave se guarda solamente en este navegador mientras trabajas localmente.
+                  Si la conexión falla, puedes volver a ingresar la clave administrativa aquí.
                 </p>
               </div>
               <div className="flex w-full gap-2 sm:w-auto">

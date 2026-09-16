@@ -34,7 +34,8 @@ Invoke-WaykuSql "CREATE TABLE IF NOT EXISTS app.schema_migrations (name text PRI
 $migrations = @(
     @{ Name = "001_admin_map_subscription.sql"; Probe = "app.territory_zones" },
     @{ Name = "002_hub_store_payments.sql"; Probe = "app.hub_services" },
-    @{ Name = "003_checkout_hardening.sql"; Probe = "app.event_registrations" }
+    @{ Name = "003_checkout_hardening.sql"; Probe = "app.event_registrations" },
+    @{ Name = "004_territory_status_text.sql"; Probe = $null }
 )
 
 foreach ($migration in $migrations) {
@@ -44,11 +45,13 @@ foreach ($migration in $migrations) {
         continue
     }
 
-    $existingSchema = (Invoke-WaykuSql "SELECT to_regclass('$($migration.Probe)') IS NOT NULL;").Trim()
-    if ($existingSchema -eq "t") {
-        Invoke-WaykuSql "INSERT INTO app.schema_migrations (name) VALUES ('$($migration.Name)') ON CONFLICT DO NOTHING;" | Out-Null
-        Write-Host "Registrada $($migration.Name) como base existente." -ForegroundColor Yellow
-        continue
+    if ($migration.Probe) {
+        $existingSchema = (Invoke-WaykuSql "SELECT to_regclass('$($migration.Probe)') IS NOT NULL;").Trim()
+        if ($existingSchema -eq "t") {
+            Invoke-WaykuSql "INSERT INTO app.schema_migrations (name) VALUES ('$($migration.Name)') ON CONFLICT DO NOTHING;" | Out-Null
+            Write-Host "Registrada $($migration.Name) como base existente." -ForegroundColor Yellow
+            continue
+        }
     }
 
     $filePath = Join-Path $projectRoot "database\migrations\$($migration.Name)"
